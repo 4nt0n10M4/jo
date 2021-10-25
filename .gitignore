@@ -1,0 +1,6 @@
+.env
+node_modules/
+dist/
+
+# For local testing cmds
+src/commands/dev_*
