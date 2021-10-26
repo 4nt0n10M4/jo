@@ -38,7 +38,7 @@ class EchoCommand extends Command {
         const myName = !!call.client.user?.username ? call.client.user.username : "Jo!"  
         const helpEmbed = new MessageEmbed()
         .setAuthor(myName, call.client.user?.displayAvatarURL()) 
-        .setDescription(`__**Commands:**__\n${cmds.map(cmd => `**${cmd.name}** - ${cmd.description}\n\`\`\`\n${cmd.usage}\n\`\`\``).join('\n')}`)
+        .setDescription(`**Commands:**\n${cmds.map(cmd => `**${cmd.name}** - ${cmd.description}\n\`\`\`\n${cmd.usage}\n\`\`\``).join('\n')}`)
         .setFooter(`Requested by: ${call.member.user.tag}.`)
         const r = call.reply({ content: `Where do you want me to send the command list?`, allowedMentions: {parse: []}, components: [row] });
 
@@ -48,8 +48,8 @@ class EchoCommand extends Command {
         const collector = msg.createMessageComponentCollector({ componentType: 'BUTTON', time: 15000 })
 
         collector.on("collect", i =>{
-            if (i.customId === "MD") {
-                
+            if (i.member?.user.id !== call.member.user.id) return 
+            if (i.customId === "MD") {     
                  i.reply({content:"✅", ephemeral: true})
                  if(!(i.member?.user instanceof User))return;
                  if(!(i.message instanceof Message))return;
@@ -64,7 +64,8 @@ class EchoCommand extends Command {
 
         
         })
-        collector.on("end", _ => {
+        collector.on("end", collected => {
+            if (collected.size > 0) return 
             if(!(msg instanceof Message))return;
             msg.delete()
         })
