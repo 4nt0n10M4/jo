@@ -16,12 +16,12 @@ class EchoCommand extends Command {
         const row = new MessageActionRow()
         .addComponents(
          new MessageButton()
-           .setCustomId('Direct Message')
-           .setLabel('MD')
+           .setCustomId('_/DM')
+           .setLabel('Direct Message')
            .setStyle('PRIMARY'),
        
          new MessageButton()
-         .setCustomId('GUILD')
+         .setCustomId('_/GUILD')
          .setLabel('This channel')
          .setStyle("PRIMARY")
        
@@ -49,7 +49,7 @@ class EchoCommand extends Command {
 
         collector.on("collect", i =>{
             if (i.member?.user.id !== call.member.user.id) return 
-            if (i.customId === "MD") {     
+            if (i.customId === "_/MD") {     
                  i.reply({content:"✅", ephemeral: true})
                  if(!(i.member?.user instanceof User))return;
                  if(!(i.message instanceof Message))return;
