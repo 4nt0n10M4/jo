@@ -1,8 +1,9 @@
 import Command from '../types/Command';
 import CommandArg from '../types/CommandArg';
 import CommandCall from "../types/CommandCall";
+import {MessageEmbed, MessageButton, MessageActionRow, Message, User } from "discord.js"
 
-class EchoCommand extends Command {
+class HelpCommand extends Command {
     constructor(){
         super({
             aliases: ['help'],
@@ -13,18 +14,28 @@ class EchoCommand extends Command {
 
     run(call: CommandCall){
         let cmds = call.client.commandHandler.commands.filter(cmd => !cmd.hidden);
+
+        let responseEmbed = new MessageEmbed()
+            .setAuthor(call.client.user!.username, call.client.user?.displayAvatarURL());
+
         if(call.args.command){
             let cmdName : string = call.args.command;
             let prefix = call.client.commandHandler.prefix;
             if(call.args.command.startsWith(prefix))cmdName = cmdName.substring(prefix.length);
 
             let cmd = cmds.get(cmdName)
-            if(cmd)return call.reply({ content: `\`\`\`\n${cmd.usage}\n\`\`\`${cmd.args.length>0 ? `\`\`\`\n${cmd.argsExplanation}\n\n\`\`\`` : cmd.description}` })
-            return call.reply({ content: '❌ Command not found', ephemeral: true });
+            if(cmd){
+                responseEmbed.setTitle(cmd.name)
+                    .setDescription(cmd.args.length > 0 ? `${cmd.description}\n\`\`\`\n${cmd.usage}\n\`\`\` \`\`\`\n${cmd.argsExplanation}\n\n\`\`\` ` : (cmd.description ? cmd.description : '*No description provided*'))
+                return call.reply({ embeds: [responseEmbed] });
+            }
+            responseEmbed.setTitle(`❌ Command not found`);
+            return call.reply({ embeds: [responseEmbed], ephemeral: true });
         }
-        
-        return call.reply({ content: `__**Commands:**__\n${cmds.map(cmd => `**${cmd.name}** ${cmd.description}\n\`\`\`\n${cmd.usage}\n\`\`\``).join('\n')}`, allowedMentions: {parse: []} });
+
+        responseEmbed.setDescription(`**Commands:**\n${cmds.map(cmd => `**${cmd.name}**${cmd.description ? ` - ${cmd.description}` : ''}\n\`\`\`\n${cmd.usage}\n\`\`\``).join('\n')}`);
+        call.reply({embeds: [responseEmbed]});
     }
 };
 
-export default EchoCommand;
+export default HelpCommand;
