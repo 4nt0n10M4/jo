@@ -182,6 +182,9 @@ class CommandHandler {
                             .setName(arg.name)
                             .setDescription(arg.description)
                             .setRequired(arg.required)
+                            
+                            
+                            
                         );
                     } else if (arg.type == 'user') {
                         return sc.addUserOption(option => option
@@ -195,6 +198,7 @@ class CommandHandler {
                             .setName(arg.name)
                             .setDescription(arg.description)
                             .setRequired(arg.required)
+                            
                         );
                     } else if (arg.type == 'channel'){
                         return sc.addChannelOption
@@ -209,6 +213,18 @@ class CommandHandler {
 
                             return option;
                         });
+                    } else if (arg.type == 'choice'){
+                        if (!arg.choices) throw new Error("You need to add choices in choice arg.")
+                        return sc.addStringOption
+                        (option => {
+                            option
+                            .setName(arg.name)
+                            .setDescription(arg.description)
+                            .setRequired(arg.required)
+                        
+                            if(arg.choices)option.addChoices(arg.choices);
+                            return option
+                        })
                     }
                 });
                 
