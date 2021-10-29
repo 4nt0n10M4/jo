@@ -12,7 +12,7 @@ class CommandArg{
         this.required = required;
         this.type = type;
         this.defaultValue = defaultValue;
-        this.choices = choices;
+        if(this.type == 'choice')this.choices = choices;
         if(this.type == 'channel')this.channelTypes = channelTypes;
     }
 

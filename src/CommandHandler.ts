@@ -69,7 +69,13 @@ class CommandHandler {
                         if(!msg.guild)throw new Error("This command can't be used on DMs");
 
                         parsedArgs[a.name] = await this.mentionsParser.roleByMentionOrId(parsedArgs[a.name], msg.guild);
-                    } else if (a.type == 'channel'){
+                    } else if (a.type == 'choice'){
+                        if (!a.choices) return 
+
+                        if(!Array.prototype.concat(...a.choices).includes(parsedArgs[a.name])) throw new Error("The argument providad don't math in choice.");
+                        
+                        parsedArgs[a.name] = argsStr;
+                    }else if (a.type == 'channel'){
                         if(!msg.guild)throw new Error("This command can't be used on DMs");
 
                         parsedArgs[a.name] = await this.mentionsParser.channelByMentionOrId(parsedArgs[a.name], msg.guild);
@@ -214,7 +220,6 @@ class CommandHandler {
                             return option;
                         });
                     } else if (arg.type == 'choice'){
-                        if (!arg.choices) throw new Error("You need to add choices in choice arg.")
                         return sc.addStringOption
                         (option => {
                             option
