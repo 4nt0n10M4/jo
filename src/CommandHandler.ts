@@ -71,10 +71,10 @@ class CommandHandler {
                         parsedArgs[a.name] = await this.mentionsParser.roleByMentionOrId(parsedArgs[a.name], msg.guild);
                     } else if (a.type == 'choice'){
                         if (!a.choices) return 
-
                         if(!Array.prototype.concat(...a.choices).includes(parsedArgs[a.name])) throw new Error("The argument providad don't math in choice.");
-                        
-                        parsedArgs[a.name] = argsStr;
+                         a.choices.forEach(x =>{
+                            if (x[0] === parsedArgs[a.name]) return parsedArgs[a.name] = x[1]
+                        }) 
                     }else if (a.type == 'channel'){
                         if(!msg.guild)throw new Error("This command can't be used on DMs");
 
