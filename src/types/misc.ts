@@ -1,5 +1,5 @@
 import { Snowflake } from "discord.js/typings/index.js";
-
+type ArgChoice = [string, any]
 interface Args {
     [key: string]: any
 }
@@ -54,4 +54,4 @@ class InvalidChannelTypeError extends Error{
     }
 }
 
-export { Args, capitalize, isOnSnowflakeRange, ChannelType, toSnakeCase, CommandNotFoundError, InvalidChannelTypeError }
+export { Args, capitalize, isOnSnowflakeRange, ChannelType, toSnakeCase, CommandNotFoundError, InvalidChannelTypeError, ArgChoice }

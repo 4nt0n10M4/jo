@@ -1,5 +1,4 @@
-import { ChannelType } from "../types/misc";
-type ArgChoice = [string, any]
+import { ChannelType, ArgChoice } from "../types/misc";
 type ArgType =
     'string' // Just a argument that may be delimited by ""
     | 'content' // The entire content of the message (without the prefix and cmd)
