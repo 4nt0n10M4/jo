@@ -1,4 +1,5 @@
 import { Snowflake } from "discord.js/typings/index.js";
+import { ChannelType } from "discord-api-types/v9";
 type ArgChoice = [string, any]
 interface Args {
     [key: string]: any
@@ -17,17 +18,31 @@ function isOnSnowflakeRange(snowflake_str: Snowflake){
     }
 }
 
-type ChannelType = "GUILD_TEXT" |
-    "DM" |
-    "GUILD_VOICE" |
-    "GROUP_DM" |
-    "GUILD_CATEGORY" |
-    "GUILD_NEWS" |
-    "GUILD_STORE" |
-    "GUILD_NEWS_THREAD" |
-    "GUILD_PUBLIC_THREAD" |
-    "GUILD_PRIVATE_THREAD" |
-    "GUILD_STAGE_VOICE"
+function filterObject(obj: object, callback: (key: string, value: any) => boolean){
+    return Object.fromEntries(
+        Object.entries(obj).filter(
+            ([key, val]) => callback(val, key)
+        )
+    );
+}
+
+let ChannelTypeNameToChannelType = {
+    [ChannelType.GuildText]: "GUILD_TEXT",
+    [ChannelType.DM]: "DM",
+    [ChannelType.GuildVoice]: "GUILD_VOICE",
+    [ChannelType.GroupDM]: "GROUP_DM",
+    [ChannelType.GuildCategory]: "GUILD_CATEGORY",
+    [ChannelType.GuildNews]: "GUILD_NEWS",
+    [ChannelType.GuildStore]: "GUILD_STORE",
+    [ChannelType.GuildNewsThread]: "GUILD_NEWS_THREAD",
+    [ChannelType.GuildPublicThread]: "GUILD_PUBLIC_THREAD",
+    [ChannelType.GuildPrivateThread]: "GUILD_PRIVATE_THREAD",
+    [ChannelType.GuildStageVoice]: "GUILD_STAGE_VOICE"
+}
+
+let ChannelTypeForSlashCommandArgumentToChannelName = filterObject(ChannelTypeNameToChannelType, (type, name) => { return !['DM', 'GROUP_DM'].includes(name) });
+
+type ChannelTypeForSlashCommandArgument = Exclude<ChannelType, ChannelType.DM | ChannelType.GroupDM>;
 
 function toSnakeCase(str: string) {
     return str.split('').map((character) => {
@@ -68,4 +83,4 @@ class InvalidChoiceError extends Error{
     }
 }
 
-export { Args, capitalize, isOnSnowflakeRange, ChannelType, toSnakeCase, CommandNotFoundError, InvalidChannelTypeError, ArgChoice, InvalidChoiceError }
+export { Args, capitalize, isOnSnowflakeRange, ChannelTypeForSlashCommandArgument, ChannelTypeForSlashCommandArgumentToChannelName, ChannelTypeNameToChannelType, toSnakeCase, CommandNotFoundError, InvalidChannelTypeError, ArgChoice, InvalidChoiceError }

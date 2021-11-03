@@ -9,7 +9,7 @@ import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import CommandCall from "./types/CommandCall";
 import Parser, { createParser } from 'discord-cmd-parser';
-import { Args, capitalize, CommandNotFoundError, InvalidChannelTypeError, InvalidChoiceError } from "./types/misc";
+import { Args, capitalize, ChannelTypeForSlashCommandArgumentToChannelName, CommandNotFoundError, InvalidChannelTypeError, InvalidChoiceError } from "./types/misc";
 import MentionsParser from "./types/MentionsParser";
 
 class CommandHandler {
@@ -80,7 +80,8 @@ class CommandHandler {
 
                         parsedArgs[a.name] = await this.mentionsParser.channelByMentionOrId(parsedArgs[a.name], msg.guild);
                         if(a.channelTypes){
-                            if(!a.channelTypes.includes(parsedArgs[a.name].type))throw new InvalidChannelTypeError(`Invalid channel, it must be ${a.channelTypes.join(' or ')}. // You provided ${parsedArgs[a.name].type}`);
+                            let ct = a.channelTypes.map(t => ChannelTypeForSlashCommandArgumentToChannelName[t]);
+                            if(!ct.includes(parsedArgs[a.name].type))throw new InvalidChannelTypeError(`Invalid channel, it must be ${a.channelTypes.map(t => ChannelTypeForSlashCommandArgumentToChannelName[t]).join(' or ')}. // You provided ${parsedArgs[a.name].type}`);
                         }
                     }
                 } catch (e){
@@ -209,10 +210,7 @@ class CommandHandler {
                             .setName(arg.name)
                             .setDescription(arg.description)
                             .setRequired(arg.required)
-
-                            // TODO: `channel_type` is not yet supported in djs slash cmds builder, it should be on the next release https://github.com/discordjs/builders/pull/41
-                            // if(arg.channelTypes)option.channel_types = arg.channelTypes;
-
+                            if(arg.channelTypes)option.addChannelTypes(arg.channelTypes);
                             return option;
                         });
                     } else if (arg.type == 'choice'){
