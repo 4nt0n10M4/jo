@@ -174,8 +174,8 @@ class CommandHandler {
             .filter(cmd => !cmd.hidden && !cmd.ownerOnly)
             .map(cmd => {
                 let description = cmd.description ? cmd.description : `aka ${cmd.aliases.join(', ')}`;
-                if(description.length >= 100){
-                    this.client.logger.warn({cmd: cmd.name, fn: 'refreshSlashCommands', file: 'CommandHandler', description}, `'${cmd.name}' description is too long (${description.length}>=100)`);
+                if(description.length > 100){
+                    this.client.logger.warn({cmd: cmd.name, fn: 'refreshSlashCommands', file: 'CommandHandler', description}, `'${cmd.name}' description is too long (${description.length}>100)`);
                     description =  description.substring(0, 97)+'...';
                 }
 
