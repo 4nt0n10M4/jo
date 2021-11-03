@@ -9,7 +9,7 @@ import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import CommandCall from "./types/CommandCall";
 import Parser, { createParser } from 'discord-cmd-parser';
-import { Args, capitalize, CommandNotFoundError, InvalidChannelTypeError } from "./types/misc";
+import { Args, capitalize, CommandNotFoundError, InvalidChannelTypeError, InvalidChoiceError } from "./types/misc";
 import MentionsParser from "./types/MentionsParser";
 
 class CommandHandler {
@@ -70,11 +70,11 @@ class CommandHandler {
 
                         parsedArgs[a.name] = await this.mentionsParser.roleByMentionOrId(parsedArgs[a.name], msg.guild);
                     } else if (a.type == 'choice'){
-                        if (!a.choices) return 
-                        if(!Array.prototype.concat(...a.choices).includes(parsedArgs[a.name])) throw new Error("The argument providad don't math in choice.");
-                         a.choices.forEach(x =>{
-                            if (x[0] === parsedArgs[a.name]) return parsedArgs[a.name] = x[1]
-                        }) 
+                        if(!a.choices)return;
+                        if(!Array.prototype.concat(...a.choices).includes(parsedArgs[a.name])) throw new InvalidChoiceError("The argument you provided is not a choice.", a.choices);
+                        a.choices.forEach(x =>{
+                            if (x[0] === parsedArgs[a.name]) return parsedArgs[a.name] = x[1];
+                        })
                     }else if (a.type == 'channel'){
                         if(!msg.guild)throw new Error("This command can't be used on DMs");
 
@@ -101,7 +101,7 @@ class CommandHandler {
             if(e instanceof CommandNotFoundError)return this.client.logger.debug({file: 'CommandHandler', fnc: 'handleMessage'}, 'Handled error (cmd not found)', e);
 
             msg.reply({ content: `${current_arg ? `Error found while parsing \`${current_arg}\` arg.\n` : ''}\`\`\`js\n${e}\n\`\`\`` });
-            if(e instanceof InvalidChannelTypeError)return this.client.logger.debug({file: 'CommandHandler', fnc: 'handleMessage'}, 'Handled error (invalid channel)', e);
+            if(e instanceof InvalidChannelTypeError || e instanceof InvalidChoiceError)return this.client.logger.debug({file: 'CommandHandler', fnc: 'handleMessage'}, `Handled error (${e.name})`, e);
             this.client.logger.error({file: 'CommandHandler', fnc: 'handleMessage', msg, user: {tag: msg.author.tag, id: msg.author.id}, guild: {id: msg.guild?.id, name: msg.guild?.name}}, 'Error handling message', e);
         }
     }

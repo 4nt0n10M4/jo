@@ -54,4 +54,18 @@ class InvalidChannelTypeError extends Error{
     }
 }
 
-export { Args, capitalize, isOnSnowflakeRange, ChannelType, toSnakeCase, CommandNotFoundError, InvalidChannelTypeError, ArgChoice }
+class InvalidChoiceError extends Error{
+    constructor(message: string, choices: ArgChoice[]){
+        super(message);
+        this.name = 'InvalidChoiceError';
+        this.choices = choices;
+    }
+
+    public choices: ArgChoice[];
+
+    toString(){
+        return `${this.name}: ${this.message}\nAvailable choices: ${this.choices.map(choice => choice[0]).join(', ')}.`;
+    }
+}
+
+export { Args, capitalize, isOnSnowflakeRange, ChannelType, toSnakeCase, CommandNotFoundError, InvalidChannelTypeError, ArgChoice, InvalidChoiceError }
