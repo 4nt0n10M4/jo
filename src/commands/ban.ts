@@ -15,7 +15,7 @@ class BanCommand extends Command {
 
     async run(call: CommandCall){
         var reason = call.args.reason || "No reason provided."
-        var sent: "✅"|"❎" = "❎"
+        var sent: "✅"|"❌" = "❌"
         var appealbot: Boolean = false 
         var member: GuildMember | false 
         var banMessage = `You have been banned from ${call.member.guild.name} \n Reason: "*${reason}*".`
@@ -25,13 +25,13 @@ class BanCommand extends Command {
 
         if (!member) return call.reply({content:"I can't find the member."})
         if (call.member.guild.ownerId == member.id ) return call.reply({content:"You can't ban the server owner."})
-        if (!member.bannable) call.reply({content:"I can't ban this member."})
+        if (!member.bannable) return call.reply({content:"I can't ban this member."})
         if (member.user.id == call.member.user.id) return call.reply({content:"You can't ban yourself XD"})
         if (appealbot) banMessage += `\n Appeal here: https://appealbot.antonioma.com/g/${member.guild.id}/appeal `
         if (member.roles.highest.position > call.member.roles.highest.position) return call.reply({content:"You need a highest position to ban this member."})
         await member.user.send(banMessage)
             .then(_=>sent = "✅")
-            .catch(_=> sent = "❎")
+            .catch(_=> sent = "❌")
         
         member.ban({reason})
 

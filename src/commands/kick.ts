@@ -15,7 +15,7 @@ class KickCommand extends Command {
 
     async run(call: CommandCall){
         var reason = call.args.reason || "No reason provided."
-        var sent: "✅"|"❎" = "❎"
+        var sent: "✅"|"❌" = "❌"
         var member: GuildMember | false 
         var banMessage = `You have been kicked from ${call.member.guild.name} \n Reason: "*${reason}*".`
 
@@ -23,12 +23,12 @@ class KickCommand extends Command {
 
         if (!member) return call.reply({content:"I can't find the member."})
         if (call.member.guild.ownerId == member.id ) return call.reply({content:"You can't kick the server owner."})
-        if (!member.kickable) call.reply({content:"I can't kick this member."})
+        if (!member.kickable) return call.reply({content:"I can't kick this member."})
         if (member.user.id == call.member.user.id) return call.reply({content:"You can't kick yourself XD"})
         if (member.roles.highest.position > call.member.roles.highest.position) return call.reply({content:"You need a highest position to kick this member."})
         await member.user.send(banMessage)
             .then(_=>sent = "✅")
-            .catch(_=> sent = "❎")
+            .catch(_=> sent = "❌")
         
         member.kick(reason)
 
@@ -36,7 +36,7 @@ class KickCommand extends Command {
         embed.setTitle("Kick")
         embed.setAuthor(call.member.user.tag, call.member.displayAvatarURL())
         embed.setTimestamp(new Date())
-        embed.setDescription(`${member.user.tag} has been banned.`)
+        embed.setDescription(`${member.user.tag} has been kicked.`)
         embed.addField("Reason", reason)
             embed.addField("Kick message", sent)
         return call.reply({embeds:[embed]})
