@@ -21,12 +21,13 @@ class CodeCommand extends Command {
 		};
 
 		let data = {
-			prompt: `\"\"\"\n${call.args.instructions}\"\"\"`,
+			prompt: `# Python 3.7\n \n\"\"\"\n${call.args.instructions}\n# An python function for the above instructions\n\"\"\"\n`,
 			temperature: 0,
-			max_tokens: 64,
+			max_tokens: 640,
 			top_p: 1,
 			frequency_penalty: 0,
 			presence_penalty: 0,
+			stop: ["#", "\"\"\""]
 		};
 		
 		let options: AxiosRequestConfig = {
