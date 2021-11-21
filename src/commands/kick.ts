@@ -30,7 +30,7 @@ class KickCommand extends Command {
             .then(_=>sent = "✅")
             .catch(_=> sent = "❌")
         
-        member.kick(reason)
+        member.kick(`${call.member.user.tag}: ${reason}`)
 
         const embed = new MessageEmbed()
         embed.setTitle("Kick")

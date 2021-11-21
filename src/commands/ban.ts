@@ -33,7 +33,7 @@ class BanCommand extends Command {
             .then(_=>sent = "✅")
             .catch(_=> sent = "❌")
         
-        member.ban({reason})
+        member.ban({reason: `${call.member.user.tag}: ${reason}`})
 
         const embed = new MessageEmbed()
         embed.setTitle("Ban")
