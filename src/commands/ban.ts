@@ -23,12 +23,12 @@ class BanCommand extends Command {
         try {(await call.member.guild.members.fetch("868957041912320072")); appealbot = true } catch(e) { appealbot = false}
         try {member = await call.member.guild.members.fetch(call.args.target.id);} catch (e) {member = false}
 
-        if (!member) return call.reply({content:"I can't find the member."})
+        if (!member) return call.reply({content:"I can't find that member."})
         if (call.member.guild.ownerId == member.id ) return call.reply({content:"You can't ban the server owner."})
-        if (!member.bannable) return call.reply({content:"I can't ban this member."})
+        if (!member.bannable) return call.reply({content:"I can't ban that member."})
         if (member.user.id == call.member.user.id) return call.reply({content:"You can't ban yourself XD"})
-        if (appealbot) banMessage += `\n Appeal here: https://appealbot.antonioma.com/g/${member.guild.id}/appeal `
-        if (member.roles.highest.position > call.member.roles.highest.position) return call.reply({content:"You need a highest position to ban this member."})
+        if (appealbot) banMessage += `\n Ban appeal: https://appealbot.antonioma.com/g/${member.guild.id}/appeal `
+        if (member.roles.highest.position > call.member.roles.highest.position) return call.reply({content:"You need a higher position to ban this member."})
         await member.user.send(banMessage)
             .then(_=>sent = "✅")
             .catch(_=> sent = "❌")

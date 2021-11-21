@@ -17,16 +17,16 @@ class KickCommand extends Command {
         var reason = call.args.reason || "No reason provided."
         var sent: "✅"|"❌" = "❌"
         var member: GuildMember | false 
-        var banMessage = `You have been kicked from ${call.member.guild.name} \n Reason: "*${reason}*".`
+        var kickMessage = `You have been kicked from ${call.member.guild.name} \n Reason: "*${reason}*".`
 
         try {member = await call.member.guild.members.fetch(call.args.target.id);} catch (e) {member = false}
 
-        if (!member) return call.reply({content:"I can't find the member."})
+        if (!member) return call.reply({content:"I can't find that member."})
         if (call.member.guild.ownerId == member.id ) return call.reply({content:"You can't kick the server owner."})
-        if (!member.kickable) return call.reply({content:"I can't kick this member."})
+        if (!member.kickable) return call.reply({content:"I can't kick that member."})
         if (member.user.id == call.member.user.id) return call.reply({content:"You can't kick yourself XD"})
-        if (member.roles.highest.position > call.member.roles.highest.position) return call.reply({content:"You need a highest position to kick this member."})
-        await member.user.send(banMessage)
+        if (member.roles.highest.position > call.member.roles.highest.position) return call.reply({content:"You need a higher position to kick this member."})
+        await member.user.send(kickMessage)
             .then(_=>sent = "✅")
             .catch(_=> sent = "❌")
         
