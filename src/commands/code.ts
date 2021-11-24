@@ -7,7 +7,7 @@ class CodeCommand extends Command {
 	constructor() {
 		super({
 			aliases: ["code", "codex"],
-			description: "Make codex code something",
+			description: "Use the OpenAI API, Codex Model to code in python from your instructions",
 			args: [new CommandArg({ name: "instructions", description: "Instructions to code", required: true, type: "content", })]
 		});
 	}
@@ -21,13 +21,13 @@ class CodeCommand extends Command {
 		};
 
 		let data = {
-			prompt: `# Python 3.7\n \n\"\"\"\n${call.args.instructions}\n# An python function for the above instructions\n\"\"\"\n`,
+			prompt: `\"\"\"\n${call.args.instructions}\n\"\"\"`,
 			temperature: 0,
 			max_tokens: 640,
 			top_p: 1,
 			frequency_penalty: 0,
 			presence_penalty: 0,
-			stop: ["#", "\"\"\""]
+			stop: ["\"\"\""]
 		};
 		
 		let options: AxiosRequestConfig = {
