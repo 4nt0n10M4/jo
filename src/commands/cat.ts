@@ -17,7 +17,7 @@ class catCommand extends Command {
             .setTitle("Cat")
             .setImage(img.data.url)
             .setColor("#7289DA")
-            .setThumbnail("Powered by thatcopy.pw/catapi")
+            .setFooter("Powered by thatcopy.pw/catapi")
 
             call.reply({embeds:[embed]})
         }
