@@ -25,10 +25,10 @@ class AnimalCommand extends Command {
         let dataset : Dataset = datasets[call.args.dataset as keyof typeof datasets];
 
         let embed = new MessageEmbed()
-        .setTitle(capitalize(dataset.title ? dataset.title : call.args.dataset))
-        .setImage(await dataset.getImage())
-        .setFooter(`Powered by ${dataset.powered}`)
-        .setColor(dataset.color ? dataset.color : "#0099ff")
+            .setTitle(capitalize(dataset.title ? dataset.title : call.args.dataset))
+            .setImage(await dataset.getImage())
+            .setFooter(`Powered by ${dataset.powered}`)
+            .setColor(dataset.color ? dataset.color : "#0099ff")
 
         call.reply({embeds:[embed]})
     }
