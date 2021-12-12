@@ -24,7 +24,7 @@ class AnimalCommand extends Command {
 
         let dataset : Dataset = datasets[call.args.dataset as keyof typeof datasets];
 
-        const embed = new MessageEmbed()
+        let embed = new MessageEmbed()
         .setTitle(capitalize(dataset.title ? dataset.title : call.args.dataset))
         .setImage(await dataset.getImage())
         .setFooter(`Powered by ${dataset.powered}`)
