@@ -4,20 +4,20 @@ import Command from "../types/Command";
 import CommandArg from "../types/CommandArg";
 import CommandCall from "../types/CommandCall";
 
-class animalCommand extends Command {
+class AnimalCommand extends Command {
     constructor() {
         super({
             aliases: ["animal"],
-            description: "Get an animal random image",
-            args: [new CommandArg({ name: "name", required: true, type: "choice", description:"The animal name", choices: [["cat","Cat"], ["duck", "Duck"]] })]
+            description: "Get a random image of an animal",
+            args: [new CommandArg({ name: "dataset", required: true, type: "choice", description:"Animals dataset to use", choices: [["cat","Cat"], ["duck", "Duck"]] })]
         })
     }
 
     async run(call: CommandCall) {
-        const { name } = call.args;
+        const { dataset } = call.args;
         let img, source
 
-        switch (name) {
+        switch (dataset) {
             case "Cat":
                 img = (await (await axios.get("https://thatcopy.pw/catapi/rest/")).data.url)
                 source = "thatcopy.pw/catapi/"
@@ -36,7 +36,7 @@ class animalCommand extends Command {
         }
 
         const embed = new MessageEmbed()
-        .setTitle(`${name}`)
+        .setTitle(`${dataset}`)
         .setImage(img)
         .setFooter(`Powered by ${source}`)
         .setColor("#0099ff")
@@ -46,4 +46,4 @@ class animalCommand extends Command {
 
 }
 
-export default animalCommand;
+export default AnimalCommand;
