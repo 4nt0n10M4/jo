@@ -10,16 +10,22 @@ class AnimalCommand extends Command {
         super({
             aliases: ["animal"],
             description: "Get a random image of an animal",
-            args: [new CommandArg({ name: "dataset", required: true, type: "choice", description:"Animals dataset to use", choices: [["cat","cat"], ["duck", "duck"], ["fox", "fox"], ["dog", "dog"]] })]
+            args: [new CommandArg({ name: "dataset", required: true, type: "choice", description:"Animals dataset to use", choices: [["bird", "bird"], ["cat", "cat"], ["dog", "dog"], ["duck", "duck"], ["fox", "fox"], ["panda", "panda"], ["racoon", "racoon"], ["red_panda", "red_panda"], ["kangaroo", "kangaroo"], ["koala", "koala"]] })]
         })
     }
 
     async run(call: CommandCall) {
         let datasets = {
+            "bird": new Dataset("https://some-random-api.ml/animal/bird", {image_path_field: "image"}),
             "cat": new Dataset("https://thatcopy.pw/catapi/rest/", {powered_by: "thatcopy.pw/catapi"}),
+            "dog": new Dataset("https://random.dog/woof.json"),
             "duck": new Dataset("https://random-d.uk/api/v2/random"),
             "fox": new Dataset("https://randomfox.ca/floof/", {image_path_field: "image"}),
-            "dog": new Dataset("https://random.dog/woof.json"),
+            "panda": new Dataset("https://some-random-api.ml/animal/panda", {image_path_field: "image"}),
+            "racoon": new Dataset("https://some-random-api.ml/animal/raccoon", {image_path_field: "image"}),
+            "red_panda": new Dataset("https://some-random-api.ml/animal/red_panda", {image_path_field: "image"}),
+            "kangaroo": new Dataset("https://some-random-api.ml/animal/kangaroo", {image_path_field: "image"}),
+            "koala": new Dataset("https://some-random-api.ml/animal/koala", {image_path_field: "image"}),
         };
 
         let dataset : Dataset = datasets[call.args.dataset as keyof typeof datasets];
