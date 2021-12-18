@@ -1,6 +1,6 @@
 {
     "recommendations": [
         "mikestead.dotenv",
-        "vtrois.gitmoji-vscode"
+        "seatonjiang.gitmoji-vscode"
     ]
 }
