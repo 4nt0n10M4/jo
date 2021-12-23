@@ -8,6 +8,7 @@ interface Args {
 function capitalize(str: string) : string {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
 function formatDateMDY(Originaldate: Date): string {
     var d = new Date(Originaldate),
         month = '' + (d.getMonth() + 1),
