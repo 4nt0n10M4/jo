@@ -4,7 +4,7 @@ import Command from "../types/Command";
 import CommandArg from "../types/CommandArg";
 import CommandCall from "../types/CommandCall";
 
-class apodCommmand extends Command {
+class ApodCommmand extends Command {
     constructor(){
         super({
             aliases: ["apod"],
@@ -41,5 +41,4 @@ class apodCommmand extends Command {
         return call.reply({embeds: [embed]});
     }
 }
-
-export default apodCommmand
+export default ApodCommmand
