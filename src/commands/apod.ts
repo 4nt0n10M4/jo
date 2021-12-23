@@ -3,7 +3,7 @@ import {  MessageEmbed } from "discord.js";
 import Command from "../types/Command";
 import CommandArg from "../types/CommandArg";
 import CommandCall from "../types/CommandCall";
-
+import { formatDateMDY as formatDate } from "../types/misc";
 class ApodCommmand extends Command {
     constructor(){
         super({
@@ -14,15 +14,7 @@ class ApodCommmand extends Command {
     }
 
     async run(call: CommandCall) {
-        function formatDate(Originaldate: Date) {
-            var d = new Date(Originaldate),
-                month = '' + (d.getMonth() + 1),
-                day = '' + d.getDate(),
-                year = d.getFullYear();
-            if (month.length < 2) month = '0' + month;
-            if (day.length < 2) day = '0' + day;
-            return [year, month, day].join('-');
-        }
+        
         let dateString: string |undefined = undefined
         if (call.args.date) {const date: Date | undefined = new Date(call.args.date)
         if (date.toString() == "Invalid Date") return call.reply({content:"Invaild date."})

@@ -8,6 +8,15 @@ interface Args {
 function capitalize(str: string) : string {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
+function formatDateMDY(Originaldate: Date): string {
+    var d = new Date(Originaldate),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+    return [year, month, day].join('-');
+}
 
 function isOnSnowflakeRange(snowflake_str: Snowflake){
     try{
@@ -83,4 +92,4 @@ class InvalidChoiceError extends Error{
     }
 }
 
-export { Args, capitalize, isOnSnowflakeRange, ChannelTypeForSlashCommandArgument, ChannelTypeForSlashCommandArgumentToChannelName, ChannelTypeNameToChannelType, toSnakeCase, CommandNotFoundError, InvalidChannelTypeError, ArgChoice, InvalidChoiceError }
+export { Args, capitalize, isOnSnowflakeRange, ChannelTypeForSlashCommandArgument, ChannelTypeForSlashCommandArgumentToChannelName, ChannelTypeNameToChannelType, toSnakeCase, CommandNotFoundError, InvalidChannelTypeError, ArgChoice, InvalidChoiceError, formatDateMDY }
