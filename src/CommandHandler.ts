@@ -145,7 +145,7 @@ class CommandHandler {
         }
 
         try{
-            call.command.run(call);
+            await call.command.run(call);
             this.client.logger.info({file: 'CommandHandler', fn: 'execCmd', cmd: call.command.name, args: call.args, user: {id: call.member.id, tag: call.member.user.tag}, guild: {id: call._source.guild?.id, name: call._source.guild?.name}}, 'Executed command');
         } catch (e){
             call.reply({ content: `\`\`\`js\n${e}\n\`\`\`` })
