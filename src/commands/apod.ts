@@ -31,7 +31,7 @@ class ApodCommmand extends Command {
         });
         
         let embed = new MessageEmbed()
-            .setAuthor("Astronomy Picture of the Day", undefined, 'https://apod.nasa.gov/apod')
+            .setAuthor({name: "Astronomy Picture of the Day", url: 'https://apod.nasa.gov/apod'})
             .setColor("#0099ff")
             .setTitle(data.title)
             .setImage(data.url)

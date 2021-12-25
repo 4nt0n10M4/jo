@@ -1,4 +1,4 @@
-import { GuildMember, MessageEmbed, Permissions } from 'discord.js';
+import { GuildMember, MessageEmbed } from 'discord.js';
 import Command from '../types/Command';
 import CommandArg from '../types/CommandArg';
 import CommandCall from "../types/CommandCall";
@@ -36,7 +36,7 @@ class BanCommand extends Command {
 
         let embed = new MessageEmbed()
             .setTitle("Ban")
-            .setAuthor(call.member.user.tag, call.member.displayAvatarURL())
+            .setAuthor({name: call.member.user.tag, iconURL: call.member.displayAvatarURL()})
             .setTimestamp(new Date())
             .setDescription(`${targetMember.user.tag} has been banned.`)
             .addField("Reason", call.args.reason || "*No reason provided.*")

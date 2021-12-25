@@ -1,5 +1,4 @@
-import { GuildMember, NewsChannel, PermissionString, TextBasedChannels, TextChannel, ThreadChannel } from "discord.js";
-import type {  } from 'discord.js';
+import { GuildMember, NewsChannel, PermissionString, TextChannel, ThreadChannel } from "discord.js";
 import CommandCall from "./CommandCall";
 import CommandArg from "./CommandArg";
 

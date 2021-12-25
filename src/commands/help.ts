@@ -1,7 +1,7 @@
 import Command from '../types/Command';
 import CommandArg from '../types/CommandArg';
 import CommandCall from "../types/CommandCall";
-import {MessageEmbed, MessageButton, MessageActionRow, Message, User } from "discord.js"
+import { MessageEmbed } from "discord.js"
 
 class HelpCommand extends Command {
     constructor(){
@@ -16,7 +16,7 @@ class HelpCommand extends Command {
         let cmds = call.client.commandHandler.commands.filter(cmd => !cmd.hidden);
 
         let responseEmbed = new MessageEmbed()
-            .setAuthor(call.client.user!.username, call.client.user?.displayAvatarURL());
+            .setAuthor({name: call.client.user!.username, iconURL: call.client.user?.displayAvatarURL()});
 
         if(call.args.command){
             let cmdName : string = call.args.command;
