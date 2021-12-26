@@ -31,7 +31,9 @@ class ExchangeCommand extends Command {
         .setTitle(`${Currencies[from]} to ${Currencies[to]}`)
         .setDescription(`${amount} ${from} is ${result} ${to}`)
         .addField(Currencies[to]+" value", `${toValue}`)
-        .setFooter("Powered by github.com/fawazahmed0/currency-api");
+        .setFooter("Results may not be up to date or accurate. |Powered by github.com/fawazahmed0/currency-api");
+
+        call.reply({embeds:[embed]})
     }
     
 }
