@@ -1,6 +1,7 @@
 import { GuildMember, NewsChannel, PermissionString, TextChannel, ThreadChannel } from "discord.js";
 import CommandCall from "./CommandCall";
 import CommandArg from "./CommandArg";
+import { Args } from "./misc";
 
 interface ArgParserArg {
     [key: string]: {default: string}
@@ -24,6 +25,8 @@ class Command {
     public ownerOnly: boolean;
     public hidden: boolean;
     public args: CommandArg[];
+
+    private _argsByName?: { [key: string]: CommandArg };
 
     hasPermission(member: GuildMember, channel?: TextChannel | NewsChannel | ThreadChannel | null){
         if(this.ownerOnly && member.id !== process.env.OWNER_ID) return {check: false, missing: ['BOT_OWNER']};
@@ -57,6 +60,19 @@ class Command {
             args[arg.name] = {default: (typeof arg.defaultValue == 'string') ? arg.defaultValue : ''};
         });
         return args;
+    }
+
+    get argsByName(){
+        if(!this._argsByName){
+            let abn : Args = {};
+            this.args.reduce((acc, arg) => {
+                acc[arg.name] = arg;
+                return acc;
+            }, abn);
+            this._argsByName = abn;
+        }
+
+        return this._argsByName;
     }
 }
 

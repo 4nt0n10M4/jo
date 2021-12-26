@@ -11,6 +11,7 @@ import CommandCall from "./types/CommandCall";
 import Parser, { createParser } from 'discord-cmd-parser';
 import { Args, capitalize, ChannelTypeForSlashCommandArgumentToChannelName, CommandNotFoundError, InvalidChannelTypeError, InvalidChoiceError } from "./types/misc";
 import MentionsParser from "./types/MentionsParser";
+import parse from "parse-duration";
 
 class CommandHandler {
     constructor(client: BotClient){
@@ -75,7 +76,7 @@ class CommandHandler {
                         a.choices.forEach(x =>{
                             if (x[0] === parsedArgs[a.name]) return parsedArgs[a.name] = x[1];
                         })
-                    }else if (a.type == 'channel'){
+                    } else if (a.type == 'channel'){
                         if(!msg.guild)throw new Error("This command can't be used on DMs");
 
                         parsedArgs[a.name] = await this.mentionsParser.channelByMentionOrId(parsedArgs[a.name], msg.guild);
@@ -83,6 +84,8 @@ class CommandHandler {
                             let ct = a.channelTypes.map(t => ChannelTypeForSlashCommandArgumentToChannelName[t]);
                             if(!ct.includes(parsedArgs[a.name].type))throw new InvalidChannelTypeError(`Invalid channel, it must be ${a.channelTypes.map(t => ChannelTypeForSlashCommandArgumentToChannelName[t]).join(' or ')}. // You provided ${parsedArgs[a.name].type}`);
                         }
+                    } else if (a.type == 'duration'){
+                        parsedArgs[a.name] = parse(parsedArgs[a.name]);
                     }
                 } catch (e){
                     if(a.required)throw e; // If is required we throw the error but otherwise we just ignore the arg
@@ -115,11 +118,17 @@ class CommandHandler {
             interaction.member = member;
         }
         try {
+            let cmd = this.getCmd(interaction.commandName);
             let args: Args = {_orig: interaction};
             // handle args
             interaction.options.data.forEach(data => {
                 if(data.type == 'STRING'){ // handle "content" args
-                    args[data.name] = data.value;
+                    let arg = cmd.argsByName[data.name];
+                    if(arg.type == 'duration'){
+                        args[data.name] = parse(`${data.value}`);
+                    } else {
+                        args[data.name] = data.value;
+                    }
                 } else if(data.type == 'USER'){
                     return args[data.name] = interaction.options.get(data.name)?.user;
                 } else if(data.type == 'ROLE'){
@@ -128,7 +137,7 @@ class CommandHandler {
                     return args[data.name] = interaction.options.get(data.name)?.channel;
                 }
             });
-            await this.execCmd(new CommandCall({command: interaction.commandName, client: this.client, args, member: interaction.member, _type: 'SlashCommand', _source: interaction}));
+            await this.execCmd(new CommandCall({command: cmd, client: this.client, args, member: interaction.member, _type: 'SlashCommand', _source: interaction}));
         } catch(e){
             this.client.logger.error({file: 'CommandHandler', fnc: 'handleSlashCommand', interaction, user: {tag: interaction.user.tag, id: interaction.user.id}, guild: {id: interaction.guild?.id, name: interaction.guild?.name}}, 'Error handling SlashCommand', e);
         }
@@ -184,7 +193,7 @@ class CommandHandler {
                 .setDescription(description);
 
                 cmd.args.forEach(arg => {
-                    if(arg.type == 'string' || arg.type == 'content'){
+                    if(arg.type == 'string' || arg.type == 'content' || arg.type == 'duration'){
                         return sc.addStringOption(option => option
                             .setName(arg.name)
                             .setDescription(arg.description)

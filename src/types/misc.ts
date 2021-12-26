@@ -1,6 +1,8 @@
 import { Snowflake } from "discord.js/typings/index.js";
 import { ChannelType } from "discord-api-types/v9";
-type ArgChoice = [string, any]
+
+type ArgChoice = [string, any];
+
 interface Args {
     [key: string]: any
 }
