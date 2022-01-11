@@ -1,3 +1,4 @@
+import { Units } from "parse-duration";
 import { ChannelTypeForSlashCommandArgument, ArgChoice } from "../types/misc";
 type ArgType =
     'string' // Just a argument that may be delimited by ""
@@ -5,7 +6,7 @@ type ArgType =
     | 'user' | 'role' | 'channel' | 'choice' | 'duration'
 
 class CommandArg{
-    constructor({name, description, required = false, type, defaultValue, channelTypes, choices}: {name: string, description: string, required: boolean, type: ArgType, defaultValue?: string | boolean, channelTypes?: ChannelTypeForSlashCommandArgument[], choices?: ArgChoice[]}){
+    constructor({name, description, required = false, type, defaultValue, channelTypes, choices, durationUnits}: {name: string, description: string, required: boolean, type: ArgType, defaultValue?: string | boolean, channelTypes?: ChannelTypeForSlashCommandArgument[], choices?: ArgChoice[], durationUnits?: Units}){
         this.name = name;
         this.description = description;
         this.required = required;
@@ -13,6 +14,7 @@ class CommandArg{
         this.defaultValue = defaultValue;
         if(this.type == 'choice')this.choices = choices;
         if(this.type == 'channel')this.channelTypes = channelTypes;
+        if(this.type == 'duration')this.durationUnits = durationUnits;
     }
 
     public name: string;
@@ -22,6 +24,7 @@ class CommandArg{
     public defaultValue?: string | boolean;
     public channelTypes?: ChannelTypeForSlashCommandArgument[];
     public choices?: ArgChoice[]
+    public durationUnits?: Units;
 }
 
 export default CommandArg;

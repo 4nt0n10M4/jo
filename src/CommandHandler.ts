@@ -85,7 +85,7 @@ class CommandHandler {
                             if(!ct.includes(parsedArgs[a.name].type))throw new InvalidChannelTypeError(`Invalid channel, it must be ${a.channelTypes.map(t => ChannelTypeForSlashCommandArgumentToChannelName[t]).join(' or ')}. // You provided ${parsedArgs[a.name].type}`);
                         }
                     } else if (a.type == 'duration'){
-                        parsedArgs[a.name] = parse(parsedArgs[a.name]);
+                        parsedArgs[a.name] = parse(parsedArgs[a.name], a.durationUnits);
                     }
                 } catch (e){
                     if(a.required)throw e; // If is required we throw the error but otherwise we just ignore the arg
@@ -125,7 +125,7 @@ class CommandHandler {
                 if(data.type == 'STRING'){ // handle "content" args
                     let arg = cmd.argsByName[data.name];
                     if(arg.type == 'duration'){
-                        args[data.name] = parse(`${data.value}`);
+                        args[data.name] = parse(`${data.value}`, arg.durationUnits);
                     } else {
                         args[data.name] = data.value;
                     }
