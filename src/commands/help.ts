@@ -4,6 +4,7 @@ import CommandCall from "../types/CommandCall";
 import { MessageEmbed } from "discord.js"
 
 class HelpCommand extends Command {
+
     constructor(){
         super({
             aliases: ['help'],
@@ -12,8 +13,9 @@ class HelpCommand extends Command {
         });
     }
 
-    run(call: CommandCall){
+    async run(call: CommandCall){
         let cmds = call.client.commandHandler.commands.filter(cmd => !cmd.hidden);
+
 
         let responseEmbed = new MessageEmbed()
             .setAuthor({name: call.client.user!.username, iconURL: call.client.user?.displayAvatarURL()});
@@ -35,6 +37,7 @@ class HelpCommand extends Command {
 
         responseEmbed.setDescription(`**Commands:**\n${cmds.map(cmd => `**${cmd.name}**${cmd.description ? ` - ${cmd.description}` : ''}\n\`\`\`\n${cmd.usage}\n\`\`\``).join('\n')}`);
         call.reply({embeds: [responseEmbed]});
+
     }
 };
 
