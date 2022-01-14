@@ -1,8 +1,10 @@
 import Command from '../types/Command';
 import CommandArg from '../types/CommandArg';
 import CommandCall from "../types/CommandCall";
-import {MessageEmbed, MessageButton, MessageActionRow, Message, User } from "discord.js"
-class EchoCommand extends Command {
+import { MessageEmbed } from "discord.js"
+
+class HelpCommand extends Command {
+
     constructor(){
         super({
             aliases: ['help'],
@@ -13,63 +15,30 @@ class EchoCommand extends Command {
 
     async run(call: CommandCall){
         let cmds = call.client.commandHandler.commands.filter(cmd => !cmd.hidden);
-        const row = new MessageActionRow()
-        .addComponents(
-         new MessageButton()
-           .setCustomId('_/DM')
-           .setLabel('Direct Message')
-           .setStyle('PRIMARY'),
-       
-         new MessageButton()
-         .setCustomId('_/GUILD')
-         .setLabel('This channel')
-         .setStyle("PRIMARY")
-       
-       );
+
+
+        let responseEmbed = new MessageEmbed()
+            .setAuthor({name: call.client.user!.username, iconURL: call.client.user?.displayAvatarURL()});
+
         if(call.args.command){
             let cmdName : string = call.args.command;
             let prefix = call.client.commandHandler.prefix;
             if(call.args.command.startsWith(prefix))cmdName = cmdName.substring(prefix.length);
 
             let cmd = cmds.get(cmdName)
-            if(cmd)return call.reply({ content: `\`\`\`\n${cmd.usage}\n\`\`\`${cmd.args.length>0 ? `\`\`\`\n${cmd.argsExplanation}\n\n\`\`\`` : cmd.description}` })
-            return call.reply({ content: '❌ Command not found', ephemeral: true });
+            if(cmd){
+                responseEmbed.setTitle(cmd.name)
+                    .setDescription(cmd.args.length > 0 ? `${cmd.description}\n\`\`\`\n${cmd.usage}\n\`\`\` \`\`\`\n${cmd.argsExplanation}\n\n\`\`\` ` : (cmd.description ? cmd.description : '*No description provided*'))
+                return call.reply({ embeds: [responseEmbed] });
+            }
+            responseEmbed.setTitle(`❌ Command not found`);
+            return call.reply({ embeds: [responseEmbed], ephemeral: true });
         }
-        const myName = !!call.client.user?.username ? call.client.user.username : "Jo!"  
-        const helpEmbed = new MessageEmbed()
-        .setAuthor(myName, call.client.user?.displayAvatarURL()) 
-        .setDescription(`**Commands:**\n${cmds.map(cmd => `**${cmd.name}** - ${cmd.description}\n\`\`\`\n${cmd.usage}\n\`\`\``).join('\n')}`)
-        .setFooter(`Requested by: ${call.member.user.tag}.`)
-        const r = call.reply({ content: `Where do you want me to send the command list?`, allowedMentions: {parse: []}, components: [row] });
 
-        let msg = await r[0]
-        if(!(msg instanceof Message))return;
-        
-        const collector = msg.createMessageComponentCollector({ componentType: 'BUTTON', time: 15000 })
+        responseEmbed.setDescription(`**Commands:**\n${cmds.map(cmd => `**${cmd.name}**${cmd.description ? ` - ${cmd.description}` : ''}\n\`\`\`\n${cmd.usage}\n\`\`\``).join('\n')}`);
+        call.reply({embeds: [responseEmbed]});
 
-        collector.on("collect", i =>{
-            if (i.member?.user.id !== call.member.user.id) return 
-            if (i.customId === "_/MD") {     
-                 i.reply({content:"✅", ephemeral: true})
-                 if(!(i.member?.user instanceof User))return;
-                 if(!(i.message instanceof Message))return;
-                 i.member?.user.send({embeds:[helpEmbed]})
-                 i.message.delete()
-
-                } else {
-                 if(!(i.message instanceof Message))return;
-                    i.reply({embeds: [helpEmbed]})
-                    i.message.delete()
-                }
-
-        
-        })
-        collector.on("end", collected => {
-            if (collected.size > 0) return 
-            if(!(msg instanceof Message))return;
-            msg.delete()
-        })
     }
 };
 
-export default EchoCommand;
+export default HelpCommand;

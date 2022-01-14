@@ -1,6 +1,7 @@
 import { CommandInteraction, GuildMember, InteractionReplyOptions, Message } from "discord.js/typings";
 import BotClient from "./Client";
 import Command from "./Command";
+import CommandCallDbHelper from "./CommandCallDbHelper";
 import { Args, CommandNotFoundError } from "./misc";
 
 type CallType = 'Message' | 'SlashCommand'
@@ -13,6 +14,8 @@ class CommandCall {
         this.member = member;
         this.args = args;
 
+        this.db = new CommandCallDbHelper(this);
+
         if(command instanceof Command){
             this.command = command;
         } else {
@@ -24,13 +27,14 @@ class CommandCall {
             }
         }
     }
-    
+
     public client: BotClient;
     public _type: CallType;
     public command: Command;
     public args: Args;
     public member: GuildMember;
     public _source: CommandInteraction | Message;
+    public db: CommandCallDbHelper;
 
     reply(options: InteractionReplyOptions){
         if(options.ephemeral && this._type == 'Message') delete options.ephemeral;

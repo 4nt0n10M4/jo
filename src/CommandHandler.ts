@@ -9,8 +9,9 @@ import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import CommandCall from "./types/CommandCall";
 import Parser, { createParser } from 'discord-cmd-parser';
-import { Args, capitalize, CommandNotFoundError, InvalidChannelTypeError } from "./types/misc";
+import { Args, capitalize, ChannelTypeForSlashCommandArgumentToChannelName, CommandNotFoundError, InvalidChannelTypeError, InvalidChoiceError } from "./types/misc";
 import MentionsParser from "./types/MentionsParser";
+import parse from "parse-duration";
 
 class CommandHandler {
     constructor(client: BotClient){
@@ -22,7 +23,7 @@ class CommandHandler {
         this.argsParser = createParser();
         this.mentionsParser = new MentionsParser(this.client);
     }
-    
+
     public commands: Collection<String, Command>
     public aliases: Collection<String, String>
     public client: BotClient;
@@ -53,7 +54,7 @@ class CommandHandler {
         let current_arg; // used to know what argument throwed the exception
         try {
             let cmd = this.getCmd(content.split(' ')[0]);
-            
+
             let parsedArgs : Args = this.argsParser.parseCommandArgs(this.argsParser.parse(argsStr), cmd.argsForParser()); // parse general args
             Object.keys(parsedArgs).forEach(k => { if(parsedArgs[k] == '')delete parsedArgs[k] }) // remove empty args
             // handle args
@@ -69,13 +70,22 @@ class CommandHandler {
                         if(!msg.guild)throw new Error("This command can't be used on DMs");
 
                         parsedArgs[a.name] = await this.mentionsParser.roleByMentionOrId(parsedArgs[a.name], msg.guild);
+                    } else if (a.type == 'choice'){
+                        if(!a.choices)return;
+                        if(!Array.prototype.concat(...a.choices).includes(parsedArgs[a.name])) throw new InvalidChoiceError("The argument you provided is not a choice.", a.choices);
+                        a.choices.forEach(x =>{
+                            if (x[0] === parsedArgs[a.name]) return parsedArgs[a.name] = x[1];
+                        })
                     } else if (a.type == 'channel'){
                         if(!msg.guild)throw new Error("This command can't be used on DMs");
 
                         parsedArgs[a.name] = await this.mentionsParser.channelByMentionOrId(parsedArgs[a.name], msg.guild);
                         if(a.channelTypes){
-                            if(!a.channelTypes.includes(parsedArgs[a.name].type))throw new InvalidChannelTypeError(`Invalid channel, it must be ${a.channelTypes.join(' or ')}. // You provided ${parsedArgs[a.name].type}`);
+                            let ct = a.channelTypes.map(t => ChannelTypeForSlashCommandArgumentToChannelName[t]);
+                            if(!ct.includes(parsedArgs[a.name].type))throw new InvalidChannelTypeError(`Invalid channel, it must be ${a.channelTypes.map(t => ChannelTypeForSlashCommandArgumentToChannelName[t]).join(' or ')}. // You provided ${parsedArgs[a.name].type}`);
                         }
+                    } else if (a.type == 'duration'){
+                        parsedArgs[a.name] = parse(parsedArgs[a.name], a.durationUnits);
                     }
                 } catch (e){
                     if(a.required)throw e; // If is required we throw the error but otherwise we just ignore the arg
@@ -88,14 +98,14 @@ class CommandHandler {
                 .filter(a => parsedArgs[a.name] == undefined); // check if any of those is undefined
             // If any of the required args was not specified throw an Error
             if(neededArgs.length > 0)return await msg.reply({ content: `**Error**: Not enough arguments passed.\n\`\`\`${this.prefix}${cmd.usage}\`\`\`\`\`\`${cmd.argsExplanation}\`\`\`` }); // ${neededArgs.map(a => a.name).join('", "')}
-            
+
             // All the args SeemsGood so we call the cmd
             await this.execCmd(new CommandCall({command: cmd, client: this.client, args: parsedArgs, member: msg.member, _type: 'Message', _source: msg}));
         } catch(e){
             if(e instanceof CommandNotFoundError)return this.client.logger.debug({file: 'CommandHandler', fnc: 'handleMessage'}, 'Handled error (cmd not found)', e);
 
             msg.reply({ content: `${current_arg ? `Error found while parsing \`${current_arg}\` arg.\n` : ''}\`\`\`js\n${e}\n\`\`\`` });
-            if(e instanceof InvalidChannelTypeError)return this.client.logger.debug({file: 'CommandHandler', fnc: 'handleMessage'}, 'Handled error (invalid channel)', e);
+            if(e instanceof InvalidChannelTypeError || e instanceof InvalidChoiceError)return this.client.logger.debug({file: 'CommandHandler', fnc: 'handleMessage'}, `Handled error (${e.name})`, e);
             this.client.logger.error({file: 'CommandHandler', fnc: 'handleMessage', msg, user: {tag: msg.author.tag, id: msg.author.id}, guild: {id: msg.guild?.id, name: msg.guild?.name}}, 'Error handling message', e);
         }
     }
@@ -108,11 +118,17 @@ class CommandHandler {
             interaction.member = member;
         }
         try {
+            let cmd = this.getCmd(interaction.commandName);
             let args: Args = {_orig: interaction};
             // handle args
             interaction.options.data.forEach(data => {
                 if(data.type == 'STRING'){ // handle "content" args
-                    args[data.name] = data.value;
+                    let arg = cmd.argsByName[data.name];
+                    if(arg.type == 'duration'){
+                        args[data.name] = parse(`${data.value}`, arg.durationUnits);
+                    } else {
+                        args[data.name] = data.value;
+                    }
                 } else if(data.type == 'USER'){
                     return args[data.name] = interaction.options.get(data.name)?.user;
                 } else if(data.type == 'ROLE'){
@@ -121,7 +137,7 @@ class CommandHandler {
                     return args[data.name] = interaction.options.get(data.name)?.channel;
                 }
             });
-            await this.execCmd(new CommandCall({command: interaction.commandName, client: this.client, args, member: interaction.member, _type: 'SlashCommand', _source: interaction}));
+            await this.execCmd(new CommandCall({command: cmd, client: this.client, args, member: interaction.member, _type: 'SlashCommand', _source: interaction}));
         } catch(e){
             this.client.logger.error({file: 'CommandHandler', fnc: 'handleSlashCommand', interaction, user: {tag: interaction.user.tag, id: interaction.user.id}, guild: {id: interaction.guild?.id, name: interaction.guild?.name}}, 'Error handling SlashCommand', e);
         }
@@ -138,7 +154,7 @@ class CommandHandler {
         }
 
         try{
-            call.command.run(call);
+            await call.command.run(call);
             this.client.logger.info({file: 'CommandHandler', fn: 'execCmd', cmd: call.command.name, args: call.args, user: {id: call.member.id, tag: call.member.user.tag}, guild: {id: call._source.guild?.id, name: call._source.guild?.name}}, 'Executed command');
         } catch (e){
             call.reply({ content: `\`\`\`js\n${e}\n\`\`\`` })
@@ -168,8 +184,8 @@ class CommandHandler {
             .filter(cmd => !cmd.hidden && !cmd.ownerOnly)
             .map(cmd => {
                 let description = cmd.description ? cmd.description : `aka ${cmd.aliases.join(', ')}`;
-                if(description.length >= 100){
-                    this.client.logger.warn({cmd: cmd.name, fn: 'refreshSlashCommands', file: 'CommandHandler', description}, `'${cmd.name}' description is too long (${description.length}>=100)`);
+                if(description.length > 100){
+                    this.client.logger.warn({cmd: cmd.name, fn: 'refreshSlashCommands', file: 'CommandHandler', description}, `'${cmd.name}' description is too long (${description.length}>100)`);
                     description =  description.substring(0, 97)+'...';
                 }
 
@@ -177,7 +193,7 @@ class CommandHandler {
                 .setDescription(description);
 
                 cmd.args.forEach(arg => {
-                    if(arg.type == 'string' || arg.type == 'content'){
+                    if(arg.type == 'string' || arg.type == 'content' || arg.type == 'duration'){
                         return sc.addStringOption(option => option
                             .setName(arg.name)
                             .setDescription(arg.description)
@@ -203,18 +219,25 @@ class CommandHandler {
                             .setName(arg.name)
                             .setDescription(arg.description)
                             .setRequired(arg.required)
-
-                            // TODO: `channel_type` is not yet supported in djs slash cmds builder, it should be on the next release https://github.com/discordjs/builders/pull/41
-                            // if(arg.channelTypes)option.channel_types = arg.channelTypes;
-
+                            if(arg.channelTypes)option.addChannelTypes(arg.channelTypes);
                             return option;
                         });
+                    } else if (arg.type == 'choice'){
+                        return sc.addStringOption
+                        (option => {
+                            option
+                            .setName(arg.name)
+                            .setDescription(arg.description)
+                            .setRequired(arg.required)
+                            if(arg.choices)option.addChoices(arg.choices);
+                            return option
+                        })
                     }
                 });
-                
+
                 return sc.toJSON();
             });
-            
+
         const rest = new REST({ version: '9' }).setToken(this.client.token+'');
 
         try{
