@@ -27,7 +27,7 @@ class CommandCall {
             }
         }
     }
-    
+
     public client: BotClient;
     public _type: CallType;
     public command: Command;

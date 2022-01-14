@@ -23,20 +23,20 @@ class ApodCommmand extends Command {
             dateString = formatDate(date);
         }
 
-        let { data } = await axios.get(`https://api.nasa.gov/planetary/apod`, { 
+        let { data } = await axios.get(`https://api.nasa.gov/planetary/apod`, {
             params: {
                 api_key: process.env.NASA_API_KEY || "DEMO_KEY",
                 date: dateString
             }
         });
-        
+
         let embed = new MessageEmbed()
             .setAuthor({name: "Astronomy Picture of the Day", url: 'https://apod.nasa.gov/apod'})
             .setColor("#0099ff")
             .setTitle(data.title)
             .setImage(data.url)
             .setTimestamp(new Date(data.date));
-        
+
         if(data.explanation) embed.setDescription(data.explanation);
         if(data.copyright) embed.setFooter(data.copyright);
 

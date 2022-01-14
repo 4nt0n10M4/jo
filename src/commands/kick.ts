@@ -29,7 +29,7 @@ class KickCommand extends Command {
         await targetMember.user.send(kickMessage)
             .then(_ => sent = true)
             .catch(_ => sent = false);
-        
+
         targetMember.kick(`${call.member.user.tag}: ${reason}`)
 
         let embed = new MessageEmbed()

@@ -30,7 +30,7 @@ class Command {
 
     hasPermission(member: GuildMember, channel?: TextChannel | NewsChannel | ThreadChannel | null){
         if(this.ownerOnly && member.id !== process.env.OWNER_ID) return {check: false, missing: ['BOT_OWNER']};
-        
+
         if(channel){
             let check = channel.permissionsFor(member).has(this.permissions);
             return {check, missing: check ? [] : channel.permissionsFor(member).missing(this.permissions)};

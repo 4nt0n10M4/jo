@@ -31,7 +31,7 @@ class BanCommand extends Command {
         await targetMember.user.send(banMessage)
             .then(_ => sent = true)
             .catch(_ => sent = false);
-        
+
         targetMember.ban({ reason: `${call.member.user.tag}: ${reason}` });
 
         let embed = new MessageEmbed()

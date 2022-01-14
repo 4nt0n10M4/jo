@@ -23,7 +23,7 @@ class CommandHandler {
         this.argsParser = createParser();
         this.mentionsParser = new MentionsParser(this.client);
     }
-    
+
     public commands: Collection<String, Command>
     public aliases: Collection<String, String>
     public client: BotClient;
@@ -54,7 +54,7 @@ class CommandHandler {
         let current_arg; // used to know what argument throwed the exception
         try {
             let cmd = this.getCmd(content.split(' ')[0]);
-            
+
             let parsedArgs : Args = this.argsParser.parseCommandArgs(this.argsParser.parse(argsStr), cmd.argsForParser()); // parse general args
             Object.keys(parsedArgs).forEach(k => { if(parsedArgs[k] == '')delete parsedArgs[k] }) // remove empty args
             // handle args
@@ -98,7 +98,7 @@ class CommandHandler {
                 .filter(a => parsedArgs[a.name] == undefined); // check if any of those is undefined
             // If any of the required args was not specified throw an Error
             if(neededArgs.length > 0)return await msg.reply({ content: `**Error**: Not enough arguments passed.\n\`\`\`${this.prefix}${cmd.usage}\`\`\`\`\`\`${cmd.argsExplanation}\`\`\`` }); // ${neededArgs.map(a => a.name).join('", "')}
-            
+
             // All the args SeemsGood so we call the cmd
             await this.execCmd(new CommandCall({command: cmd, client: this.client, args: parsedArgs, member: msg.member, _type: 'Message', _source: msg}));
         } catch(e){
@@ -234,10 +234,10 @@ class CommandHandler {
                         })
                     }
                 });
-                
+
                 return sc.toJSON();
             });
-            
+
         const rest = new REST({ version: '9' }).setToken(this.client.token+'');
 
         try{
