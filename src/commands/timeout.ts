@@ -19,20 +19,21 @@ class TimeoutCommand extends Command {
     }
 
     async run(call: CommandCall){
-        let reason = call.args.reason || "No reason provided.";
+        const translate = call.translate.bind(call);
+        let reason = call.args.reason || translate("default_reason");
         let duration = call.args.duration;
 
         if(duration > 28 /* days */ * 24 /* hours a day */ * 60 /* minutes each hour */ * 60 /* secs per minute */ * 1e3 /* ms per sec */){
-            throw new Error('Duration cannot be longer than 28 days.'); // Discord's max timeout duration is 28 days https://discord.com/developers/docs/resources/guild#modify-guild-member
+            throw new Error(translate("invalid_duration")); // Discord's max timeout duration is 28 days https://discord.com/developers/docs/resources/guild#modify-guild-member
         }
 
         let targetMember: GuildMember | false = await call.member.guild.members.fetch({ user: call.args.target, force: true }).catch(_ => false); // force, because d.js permissions sometimes are not synced.
-        if (!targetMember) return call.reply({ content: "I can't find that member." });
+        if (!targetMember) return call.reply({ content: translate("no_target") });
 
-        if (call.member.guild.ownerId == targetMember.id) return call.reply({ content: "You can't timeout the server owner." });
-        if (!targetMember.moderatable) return call.reply({ content: "I can't timeout that member." });
-        if (targetMember.user.id == call.member.user.id) return call.reply({ content: "You can't timeout yourself XD" });
-        if (targetMember.roles.highest.position > call.member.roles.highest.position && call.member.id !== call.member.guild.ownerId) return call.reply({ content: "You need a higher position to timeout this member." });
+        if (call.member.guild.ownerId == targetMember.id) return call.reply({ content: translate("target_owner") });
+        if (!targetMember.moderatable) return call.reply({ content: translate("unmoderatable") });
+        if (targetMember.user.id == call.member.user.id) return call.reply({ content: translate("target_yourself") });
+        if (targetMember.roles.highest.position > call.member.roles.highest.position && call.member.id !== call.member.guild.ownerId) return call.reply({ content: translate("lower_role") });
 
         targetMember.timeout(duration, `${call.member.user.tag}: ${reason}`);
 
@@ -40,8 +41,8 @@ class TimeoutCommand extends Command {
             .setTitle("Timeout")
             .setAuthor({name: call.member.user.tag, iconURL: call.member.displayAvatarURL()})
             .setTimestamp(new Date())
-            .setDescription(`${targetMember.user.tag} has been timed out.`)
-            .addField("Reason", call.args.reason || "*No reason provided.*")
+            .setDescription(translate("embed_description", {target: targetMember.user.tag}))
+            .addField("Reason", reason)
             .addField("Duration", humanizeDuration(duration));
 
         return call.reply({ embeds: [embed] });

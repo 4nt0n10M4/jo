@@ -1,0 +1,45 @@
+{
+    "apod": {
+        "embed_title": "Astronomy Picture of the Day"
+    },
+    "kick": {
+        "message": "You have been kicked from {server} \n Reason: \"*{reason}*\".",
+        "default_reason": "No reason provided.",
+        "no_target": "I can't find that member.",
+        "lower_role": "You need a higher position to kick this member.",
+        "target_owner": "You can't kick the server owner.",
+        "unkickable": "I can't kick that member.",
+        "target_yourself": "You can't kick yourself XD",
+        "embed_description": "{target} has been kicked."
+    },
+    "ban":{
+        "default_reason": "No reason provided.",
+        "ban_message": "You have been banned from {guild} \n Reason: \"*{reason}*\".",
+        "no_target": "I can't find that member.",
+        "target_owner": "You can't ban the server owner.",
+        "unbannable": "I can't ban that member.",
+        "target_yourself": "You can't ban yourself XD",
+        "lower_role": "You need a higher position to ban this member.",
+        "embed_description": "{target} has been banned."
+    },
+    "help": {
+        "404": "❌ Command not found"
+    },
+    "slowmode": {
+        "invalid_duration": "Duration cannot be longer than 6 hours.",
+        "no_channel":"Error getting target channel.",
+        "invalid_channel": "Slowmode cannot be set on this channel.",
+        "reason": "{author}: Slowmode changed from {original} to {final}.",
+        "reply_message": "✅ Slowmode {final}"
+    },
+    "timeout": {
+        "default_reason": "No reason provided.",
+        "invalid_duration":"Duration cannot be longer than 28 days",
+        "no_target": "I can't find that member.",
+        "target_owner": "You can't timeout the server owner.",
+        "unmoderatable": "I can't timeout that member.",
+        "target_yourself": "You can't timeout yourself XD",
+        "lower_role": "You need a higher position to timeout this member.",
+        "embed_description": "{target} has been timed out."
+    }
+}

@@ -14,17 +14,19 @@ class KickCommand extends Command {
     }
 
     async run(call: CommandCall){
-        let reason = call.args.reason || "No reason provided.";
+        const translate = call.translate.bind(call);
+        
+        let reason = call.args.reason || translate("default_reason");
         let sent = false;
-        let kickMessage = `You have been kicked from ${call.member.guild.name} \n Reason: "*${reason}*".`;
+        let kickMessage = translate("kick_message", { server: call.member.guild.name, reason });
 
         let targetMember: GuildMember | false = await call.member.guild.members.fetch({ user: call.args.target, force: true }).catch(_ => false); // force, because d.js permissions sometimes are not synced.
-        if (!targetMember) return call.reply({ content: "I can't find that member." });
+        if (!targetMember) return call.reply({ content: translate("no_target") });
 
-        if (call.member.guild.ownerId == targetMember.id) return call.reply({ content: "You can't kick the server owner." });
-        if (!targetMember.kickable) return call.reply({ content: "I can't kick that member." });
-        if (targetMember.user.id == call.member.user.id) return call.reply({ content: "You can't kick yourself XD" });
-        if (targetMember.roles.highest.position > call.member.roles.highest.position && call.member.id !== call.member.guild.ownerId) return call.reply({ content: "You need a higher position to kick this member." });
+        if (call.member.guild.ownerId == targetMember.id) return call.reply({ content: translate("target_owner") });
+        if (!targetMember.kickable) return call.reply({ content: translate("unkickable") });
+        if (targetMember.user.id == call.member.user.id) return call.reply({ content: translate("target_yourself") });
+        if (targetMember.roles.highest.position > call.member.roles.highest.position && call.member.id !== call.member.guild.ownerId) return call.reply({ content: translate("lower_role") });
 
         await targetMember.user.send(kickMessage)
             .then(_ => sent = true)
@@ -36,8 +38,8 @@ class KickCommand extends Command {
             .setTitle("Kick")
             .setAuthor({name: call.member.user.tag, iconURL: call.member.displayAvatarURL()})
             .setTimestamp(new Date())
-            .setDescription(`${targetMember.user.tag} has been kicked.`)
-            .addField("Reason", call.args.reason || "*No reason provided.*")
+            .setDescription(translate("embed_description",  { target: targetMember.user.tag }))
+            .addField("Reason", reason)
             .addField("Kick message", sent ? "✅" : "❌");
 
         return call.reply({ embeds: [embed] });

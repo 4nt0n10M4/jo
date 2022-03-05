@@ -15,6 +15,7 @@ class ApodCommmand extends Command {
     }
 
     async run(call: CommandCall) {
+        const translate = call.translate.bind(call);
         let dateString: string | undefined;
 
         if (call.args.date) {
@@ -31,7 +32,7 @@ class ApodCommmand extends Command {
         });
         
         let embed = new MessageEmbed()
-            .setAuthor({name: "Astronomy Picture of the Day", url: 'https://apod.nasa.gov/apod'})
+            .setAuthor({name: translate("embed_title"), url: 'https://apod.nasa.gov/apod'})
             .setColor("#0099ff")
             .setTitle(data.title)
             .setImage(data.url)
