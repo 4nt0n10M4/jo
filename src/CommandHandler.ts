@@ -100,7 +100,7 @@ class CommandHandler {
             if(neededArgs.length > 0)return await msg.reply({ content: `**Error**: Not enough arguments passed.\n\`\`\`${this.prefix}${cmd.usage}\`\`\`\`\`\`${cmd.argsExplanation}\`\`\`` }); // ${neededArgs.map(a => a.name).join('", "')}
             
             // All the args SeemsGood so we call the cmd
-            await this.execCmd(new CommandCall({command: cmd, client: this.client, args: parsedArgs, member: msg.member, _type: 'Message', _source: msg}));
+            await this.execCmd(new CommandCall({command: cmd, client: this.client, args: parsedArgs, member: msg.member, _type: 'Message', locale: msg.guild.preferredLocale, _source: msg}));
         } catch(e){
             if(e instanceof CommandNotFoundError)return this.client.logger.debug({file: 'CommandHandler', fnc: 'handleMessage'}, 'Handled error (cmd not found)', e);
 
@@ -137,7 +137,7 @@ class CommandHandler {
                     return args[data.name] = interaction.options.get(data.name)?.channel;
                 }
             });
-            await this.execCmd(new CommandCall({command: cmd, client: this.client, args, member: interaction.member, _type: 'SlashCommand', _source: interaction}));
+            await this.execCmd(new CommandCall({command: cmd, client: this.client, args, member: interaction.member, _type: 'SlashCommand', locale: interaction.locale, _source: interaction}));
         } catch(e){
             this.client.logger.error({file: 'CommandHandler', fnc: 'handleSlashCommand', interaction, user: {tag: interaction.user.tag, id: interaction.user.id}, guild: {id: interaction.guild?.id, name: interaction.guild?.name}}, 'Error handling SlashCommand', e);
         }
