@@ -1,0 +1,10 @@
+{
+    "default_reason": "No reason provided.",
+    "invalid_duration":"Duration cannot be longer than 28 days",
+    "no_target": "I can't find that member.",
+    "target_owner": "You can't timeout the server owner.",
+    "unmoderatable": "I can't timeout that member.",
+    "target_yourself": "You can't timeout yourself XD",
+    "lower_role": "You need a higher position to timeout this member.",
+    "embed_description": "{target} has been timed out."
+}

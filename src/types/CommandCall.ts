@@ -63,9 +63,14 @@ class CommandCall {
     public translate(key: string, args?: Args){
         const lang = this.locale;
         const command = this.command.aliases[0];
-
-        let translation = require(`../../locales/${lang}`)[command][key];
-
+        let translation;
+        
+        try {
+            translation = require(`../../locales/${lang}/${command}.json`)[key];
+        } catch (e) {
+            translation = null
+        }
+        if (!translation) translation = require(`../../locales/en-US/${command}.json`)[key];
         for (const arg in args) {
             translation = translation.replace(`{${arg}}`, args[arg]);
         }
