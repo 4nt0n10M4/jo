@@ -48,6 +48,9 @@ class CommandHandler {
         if(msg.guild == null)return; // Igmore DMs
         if(msg.member == null)return; //ts stop crying
 
+        //Get the locale property from the guild using prisma
+        let guild = await this.client.database.guild.findFirst({where: {id: msg.guild.id}})
+        let locale = guild?.locale || 'en-US';
         let content = msg.content.substring(this.prefix.length).trim();
         let args = content.split(' '); args.shift(); // remove prefix and command name
         let argsStr = args.join(' ');
@@ -100,7 +103,7 @@ class CommandHandler {
             if(neededArgs.length > 0)return await msg.reply({ content: `**Error**: Not enough arguments passed.\n\`\`\`${this.prefix}${cmd.usage}\`\`\`\`\`\`${cmd.argsExplanation}\`\`\`` }); // ${neededArgs.map(a => a.name).join('", "')}
             
             // All the args SeemsGood so we call the cmd
-            await this.execCmd(new CommandCall({command: cmd, client: this.client, args: parsedArgs, member: msg.member, _type: 'Message', locale: msg.guild.preferredLocale, _source: msg}));
+            await this.execCmd(new CommandCall({command: cmd, client: this.client, args: parsedArgs, member: msg.member, _type: 'Message', locale, _source: msg}));
         } catch(e){
             if(e instanceof CommandNotFoundError)return this.client.logger.debug({file: 'CommandHandler', fnc: 'handleMessage'}, 'Handled error (cmd not found)', e);
 
