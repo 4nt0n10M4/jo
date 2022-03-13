@@ -1,0 +1,10 @@
+{
+    "default_reason": "No se ha especificado la razón.",
+    "invalid_duration": "La duración no puede ser superior a 28 días",
+    "no_target": "No puedo encontrar a tal miembro.",
+    "target_owner": "No puedes silenciar al propietario del servidor.",
+    "unmoderatable": "No puedo silenciar a tal miembro.",
+    "target_yourself": "No puedes silenciarte a ti mismo XD",
+    "lower_role": "Necesitas un rol más alto para silenciar a este miembro.",
+    "embed_description": "{target} fue silenciado."
+}

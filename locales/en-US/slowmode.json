@@ -1,0 +1,7 @@
+{
+    "invalid_duration": "Duration cannot be longer than 6 hours.",
+    "no_channel":"Error getting target channel.",
+    "invalid_channel": "Slowmode cannot be set on this channel.",
+    "reason": "{author}: Slowmode changed from {original} to {final}.",
+    "reply_message": "✅ Slowmode {final}"
+}

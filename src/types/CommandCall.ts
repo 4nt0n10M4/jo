@@ -7,12 +7,14 @@ import { Args, CommandNotFoundError } from "./misc";
 type CallType = 'Message' | 'SlashCommand'
 
 class CommandCall {
-    constructor({client, _type, command, args, member, _source}: {client: BotClient, _type: CallType, command: string | Command, args: Args, member: GuildMember, _source: CommandInteraction | Message}){
+    constructor({client, _type, command, args, member, locale = "en-US", _source}: {client: BotClient, _type: CallType, command: string | Command, args: Args, member: GuildMember, locale: string, _source: CommandInteraction | Message}){
         this.client = client;
         this._type = _type;
         this._source = _source;
         this.member = member;
         this.args = args;
+        this.locale = locale;
+
 
         this.db = new CommandCallDbHelper(this);
 
@@ -35,6 +37,7 @@ class CommandCall {
     public member: GuildMember;
     public _source: CommandInteraction | Message;
     public db: CommandCallDbHelper;
+    public locale: string;
 
     reply(options: InteractionReplyOptions){
         if(options.ephemeral && this._type == 'Message') delete options.ephemeral;
@@ -57,6 +60,24 @@ class CommandCall {
 
         return chunks;
     }
+    public translate(key: string, args?: Args){
+        const lang = this.locale;
+        const command = this.command.aliases[0];
+        let translation;
+        
+        try {
+            translation = require(`../../locales/${lang}/${command}.json`)[key];
+        } catch (e) {
+            translation = null
+        }
+        if (!translation) translation = require(`../../locales/en-US/${command}.json`)[key];
+        for (const arg in args) {
+            translation = translation.replace(`{${arg}}`, args[arg]);
+        }
+        return translation;
+    }
+        
+        
 }
 
 export default CommandCall;

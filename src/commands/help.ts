@@ -13,6 +13,8 @@ class HelpCommand extends Command {
     }
 
     run(call: CommandCall){
+        const translate = call.translate.bind(call);
+
         let cmds = call.client.commandHandler.commands.filter(cmd => !cmd.hidden);
 
         let responseEmbed = new MessageEmbed()
@@ -29,7 +31,7 @@ class HelpCommand extends Command {
                     .setDescription(cmd.args.length > 0 ? `${cmd.description}\n\`\`\`\n${cmd.usage}\n\`\`\` \`\`\`\n${cmd.argsExplanation}\n\n\`\`\` ` : (cmd.description ? cmd.description : '*No description provided*'))
                 return call.reply({ embeds: [responseEmbed] });
             }
-            responseEmbed.setTitle(`❌ Command not found`);
+            responseEmbed.setTitle(translate("404"));
             return call.reply({ embeds: [responseEmbed], ephemeral: true });
         }
 

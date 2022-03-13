@@ -14,19 +14,21 @@ class BanCommand extends Command {
     }
 
     async run(call: CommandCall){
-        let reason = call.args.reason || "No reason provided.";
+        const translate = call.translate.bind(call);
+
+        let reason = call.args.reason || translate("default_reason");
         let sent = false;
-        let banMessage = `You have been banned from ${call.member.guild.name} \n Reason: "*${reason}*".`;
+        let banMessage = translate("ban_message", { guild: call.member.guild.name, reason });
 
         let targetMember: GuildMember | false = await call.member.guild.members.fetch({ user: call.args.target, force: true }).catch(_ => false); // force, because d.js permissions sometimes are not synced.
-        if (!targetMember) return call.reply({ content: "I can't find that member." });
+        if (!targetMember) return call.reply({ content: translate("no_target") });
         let appealbot: boolean = await call.member.guild.members.fetch({ user: '868957041912320072' }).then(_ => true).catch(_ => false);
 
-        if (call.member.guild.ownerId == targetMember.id) return call.reply({ content: "You can't ban the server owner." });
-        if (!targetMember.bannable) return call.reply({ content: "I can't ban that member." });
-        if (targetMember.user.id == call.member.user.id) return call.reply({ content: "You can't ban yourself XD" });
+        if (call.member.guild.ownerId == targetMember.id) return call.reply({ content: translate("target_owner") });
+        if (!targetMember.bannable) return call.reply({ content: translate("unbanable") });
+        if (targetMember.user.id == call.member.user.id) return call.reply({ content: translate("target_yourself") });
         if (appealbot) banMessage += `\nBan appeal: https://appealbot.antonioma.com/g/${targetMember.guild.id}/appeal`;
-        if (targetMember.roles.highest.position > call.member.roles.highest.position && call.member.id !== call.member.guild.ownerId) return call.reply({ content: "You need a higher position to ban this member." });
+        if (targetMember.roles.highest.position > call.member.roles.highest.position && call.member.id !== call.member.guild.ownerId) return call.reply({ content: translate("lower_role") });
 
         await targetMember.user.send(banMessage)
             .then(_ => sent = true)
@@ -38,8 +40,8 @@ class BanCommand extends Command {
             .setTitle("Ban")
             .setAuthor({name: call.member.user.tag, iconURL: call.member.displayAvatarURL()})
             .setTimestamp(new Date())
-            .setDescription(`${targetMember.user.tag} has been banned.`)
-            .addField("Reason", call.args.reason || "*No reason provided.*")
+            .setDescription(translate("embed_description",  { target: targetMember.user.tag }))
+            .addField("Reason", reason)
             .addField(`${!appealbot ? 'Ban': 'Appeal'} message`, sent ? "✅" : "❌");
 
         return call.reply({ embeds: [embed] });

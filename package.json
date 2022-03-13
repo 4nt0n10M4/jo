@@ -9,16 +9,16 @@
     "dev": "yarn build && yarn start"
   },
   "devDependencies": {
-    "prisma": "^3.6.0"
+    "prisma": "^3.10.0"
   },
   "dependencies": {
     "@discordjs/builders": "0.8.2",
     "@discordjs/rest": "^0.1.0-canary.0",
-    "@prisma/client": "^3.6.0",
+    "@prisma/client": "^3.10.0",
     "axios": "^0.24.0",
     "discord-api-types": "^0.24.0",
     "discord-cmd-parser": "^2.2.0",
-    "discord.js": "^13.2.0",
+    "discord.js": "^13.6.0",
     "dotenv": "^10.0.0",
     "humanize-duration": "^3.27.1",
     "is-promise": "^4.0.0",

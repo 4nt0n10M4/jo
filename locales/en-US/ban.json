@@ -1,0 +1,10 @@
+{
+    "default_reason": "No reason provided.",
+    "ban_message": "You have been banned from {guild} \n Reason: \"*{reason}*\".",
+    "no_target": "I can't find that member.",
+    "target_owner": "You can't ban the server owner.",
+    "unbannable": "I can't ban that member.",
+    "target_yourself": "You can't ban yourself XD",
+    "lower_role": "You need a higher position to ban this member.",
+    "embed_description": "{target} has been banned."
+}

@@ -1,0 +1,10 @@
+{
+    "message": "Fuiste expulsado de {server} \n Razón: \"*{reason}*\".",
+    "default_reason": "No se ha especificado la razón.",
+    "no_target": "No puedo encontrar a tal miembro.",
+    "lower_role": "Necesitas un rol más alto para expulsar a este miembro.",
+    "target_owner": "No puedes expulsar al propietario del servidor.",
+    "unkickable": "No puedo expulsar a tal miembro.",
+    "target_yourself": "No puedes expulsarte a ti mismo XD",
+    "embed_description": "{target} fue expulsado."
+}
