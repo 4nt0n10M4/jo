@@ -1,0 +1,10 @@
+{
+    "default_reason": "No se ha especificado la razón.",
+    "ban_message": "Fuiste baneado de {guild} \n Razón: \"*{reason}*\".",
+    "no_target": "No puedo encontrar a tal miembro.",
+    "target_owner": "No puedes banear al propietario del servidor.",
+    "unbannable": "No puedo banear a tal miembro.",
+    "target_yourself": "No puedes banearte a ti mismo XD",
+    "lower_role": "Necesitas un rol más alto para banear a este miembro.",
+    "embed_description": "{target} fue baneado."
+}

@@ -1,0 +1,7 @@
+{
+    "invalid_duration": "La duración no puede ser superior a 6 horas.",
+    "no_channel": "Error identificando el canal.",
+    "invalid_channel": "El modo lento no puede establecerse en este canal.",
+    "reason": "{author}: Modo lento cambiado de {original} a {final}.",
+    "reply_message": "✅ Slowmode {final}"
+}

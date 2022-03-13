@@ -1,0 +1,10 @@
+{
+    "default_reason": "Aucune raison n'a été donnée.",
+    "ban_message": "Vous avez été banni de {guild} \n Raison: \"*{reason}*\".",
+    "no_target": "Je ne trouve pas ce membre.",
+    "target_owner": "Vous ne pouvez pas bannir le propriétaire du serveur.",
+    "unbannable": "Je ne peux pas bannir ce membre.",
+    "target_yourself": "Vous ne pouvez pas vous bannir à vous-même XD",
+    "lower_role": "Vous avez besoin d'une position plus élevée pour bannir ce membre.",
+    "embed_description": "{target} a été banni."
+}

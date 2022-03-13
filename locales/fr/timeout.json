@@ -1,0 +1,10 @@
+{
+    "default_reason": "Aucune raison n'a été donnée.",
+    "invalid_duration": "La durée ne peut pas dépasser les 28 heures",
+    "no_target": "Je ne trouves ce membre.",
+    "target_owner": "Vous ne pouvez pas mettre un timeout au propriétaire du serveur.",
+    "unmoderatable": "Vous ne pouvez pas mettre un timeout à ce membre.",
+    "target_yourself": "Vous ne pouvez pas vous mettre un timeout à vous-même XD",
+    "lower_role": "Vous avez besoin d'une position plus élevée pour mettre un timeout à ce membre.",
+    "embed_description": "{target} a un timeout."
+}

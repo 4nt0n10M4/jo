@@ -1,0 +1,7 @@
+{
+    "invalid_duration": "La durée ne peut pas dépasser les 6 heures.",
+    "no_channel": "Erreur dans l'obtention du canal cible.",
+    "invalid_channel": "Le mode lent ne peut pas être défini sur ce canal.",
+    "reason": "{author}: Mode lent changé de {original} à {final}.",
+    "reply_message": "✅ Mode lent {final}"
+}
