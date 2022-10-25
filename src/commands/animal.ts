@@ -17,7 +17,7 @@ class AnimalCommand extends Command {
     async run(call: CommandCall) {
         let datasets = {
             "bird": new Dataset("https://some-random-api.ml/animal/bird", {image_path_field: "image"}),
-            "cat": new Dataset("https://thatcopy.pw/catapi/rest/", {powered_by: "thatcopy.pw/catapi"}),
+            "cat": new Dataset("https://aws.random.cat/meow", {powered_by: "random.cat", image_path_field: "file"}),
             "dog": new Dataset("https://random.dog/woof.json"),
             "duck": new Dataset("https://random-d.uk/api/v2/random"),
             "fox": new Dataset("https://randomfox.ca/floof/", {image_path_field: "image"}),
